@@ -1,0 +1,405 @@
+Why nosql
+-- schemaless database -- no schema to which the data has to adhere.
+2 rows can have completely different data(number of columns, data type of data, entire data )
+RDBMS --Rigid schema; Data redundancy; Updates/deletes are more complex;May lead to inconsistency of data; joins(expensive operations) are needed
+
+-- volume of data has increased over the years
+-- devices working with the data 
+-- kind of applications
+-- type of data 
+	textual data, semi structured data(xml, json), unstructured data (images, videos,audio)
+	IOT, mobiles
+-- dynamic data (columns need not be fixed)
+-- ETL -- join/manipulation/ all the data may not be in a particular format
+-- BI -- dynamic analytical view of data  
+-- data storage/ retrieval/ manipulation
+
+-- Scalability 
+	Horizontal scaling is built in -- very less set up
+-- data ingestion easier(cache,persistence )
+	data availability (24/7; 365 days)
+	faster data access
+-- all have an inbuilt cache layer
+-- transaction 
+	ACID compliant  
+-- need not be ACID compliant 
+-- neo 4j -- ACID compliant
+-- couchbase -- not acid compliant
+
+-- Adhere to CAP theorem (Consistency , Availability, Partition tolerance)
+	At a particular point of time, the db will only adhere to 2 out of 3 principles
+
+-- Most of the nosql, have their corresponding cloud version
+-- many cloud based db's -- 
+-- Partitioning/ sharding  of data is built in 
+	Breaking up of data into different physical servers
+	faster retrieval of data 	
+    Back ups -- faster 
+	Speed of writes/ reads -- better
+-- Replication of data -- built in 
+	Same data replicated in different servers
+	Availability -- high
+	Consistency -- maintain 
+	More memory -- memory has become cheaper 
+	memory vs high availability
+
+ 
+
+
+
+RDBMS
+Employee Info -- empId, empName,hobbies
+create table employee(
+empId int,
+empName varchar2(20),
+hobbies varchar2(20)
+)
+
+harshita -- watching movies
+Satish -- playing badminton, reading books
+Pravallika -- reading books, listening to music, singing,watching movies
+
+RDBMS -- normalisation
+1st NF -- No multi valued attributes
+
+create table employee(
+empId int ,
+empName varchar2(20),
+hobbiesId varchar2(20) FK
+Pk(empId, hobbiesId)
+)
+
+In emp table
+Harshita -- 1 row
+Satish -- 2 rows
+Pravallika --4 rows
+
+
+create table hobbies(
+description varchar2(20),
+hobbiesId varchar2(20),
+PK(hobbiesId)
+)
+
+Get the empname and their respective hobbies
+-- JOIN(inner) employee and hobbies table
+-- expensive operation
+-- data is huge ; more costlier
+
+Image in RDBMS -- CLOB, BLOB -- data in binary format
+video  in RDBMS -- CLOB, BLOB -- data in binary format
+
+Instagram -- stories, like, comments, sharing
+stories -- images/videos
+comments -- text/ images
+sharing -- images/videos
+
+Not suitable for image  -- not optimised -- performance, cost, memory
+image -- convert to binary -- store
+retrieval -- binary to image 
+
+
+Amazon
+Normal day -- 10Lakhs
+Amazon prime day -- 50Lakhs
+1 week after the sale -- 10 Lakhs
+
+2 types of scaling
+1. vertical scaling --Increase the hardware(CPU, memory) of single server
+2. Horizontal scaling -- Many commodity servers
+Amazon
+Normal day -- 10Lakhs -- 10 servers
+Amazon prime day -- 50Lakhs -- 50 servers
+1 week after the sale -- 10 Lakhs -- 10 servers
+
+Scale up during the sale 
+1. Increase the hardware(CPU, memory) of single server
+	Concern areas:
+	-- Time, hardware restriction, availability of data (single server), costlier
+2. Increase the number of servers 
+	Advantages: Scale up and scale down is easier, high availability,automatic failover, 
+	Limitations: Fault tolerance(data may not be available(in seconds)), data consistency, sync of data among the various servers(reads/writes)
+	
+RDBMS -- default -- Vertical scaling ; lof of config setup is required(horizontal scaling)
+
+
+Cloud
+-- Infrastructure, commute, storage, db, security, cost effective, flexibility, high availability, disaster recovery, pay as u go model, less maintanence needed, access from anywhere anytime  
+
+dbaaS
+
+Why dbaaS -- 
+	-- focus on data and not on storage
+	-- access from anywhere anytime  
+	-- high availability is in built
+	-- cost effective
+	-- maintanence of db servers, automatic failover(with very less downtime), disaster recovery built
+	-- back up and PITR 
+	-- 
+
+Types of nosql 
+1. Document based
+2. Column based
+3. key value based
+4. Graph based
+
+Emp : 
+
+Document based
+-- Mongodb
+-- store each record as document 	(json object)
+-- Table -- collection
+
+{empId:101,empName:"sara",salary:56789}
+
+
+Graph based
+-- Neo4j
+	Edges and relationship
+	Entities (data)
+
+Book -- BookId, name, author
+Person -- Id, name
+
+person buys a books
+relationship buys (dateOfPurchase)
+
+Person has written a book
+relationship written (publishedDate, publisherId)
+
+Key value based
+Couchbase
+Key (PK)
+Value --record(string, array, object)
+
+In a single bucket:
+employee_101: {empName:"sara",salary:56789}
+dept_d1:{depyName:"HR",location:"INDIA"}
+
+
+Keys have to be unique
+101: {empName:"sara",salary:56789};// updated the value for key 101
+
+In couchbase earlier versions -- no concept of table
+buckets -- database
+
+Column based
+Cassandra -- Similar to RDbms structure but have all the features of no sql
+Primary key : (Partition key + sort key)
+
+India 101 sara
+Aus 102 tara
+India 103 lara
+Aus 104 ram
+India 105 shyam
+Aus 106 jack
+India 107 ganesh
+
+RDBMS -- PK -- empId
+Cassandra -- PK (Country,EmpId)
+Partition key -- Country
+Sort key EmpId
+
+Data storage:
+India 101 sara
+India 103 lara
+India 105 shyam
+India 107 ganesh
+
+Aus 102 tara
+Aus 104 ram
+Aus 106 jack
+
+1. based on the application and queries
+Based on country value -- partition the data based on the country values
+
+Read query -- query to that partition 
+keep the records with the same partition key together
+
+
+Dynamodb -- key value, column based
+
+Primary Key -- partition key + optional sort key
+
+Primary key with only the partition key -- Partition key itself has to be unique;  
+	Number of partitions = number of records
+Primary key with  the partition key and sort key
+
+Restrictions
+1. Only one field can be the partition key 
+2. Data type of partition key -- number/string/binary
+3. Only one field can be the sort key 
+4. Data type of sort key -- number/string/binary
+5. Partition key is mandatory
+6. Data integrity constraints are at the item level
+
+Create a table with a PK
+
+
+Indexes
+1. Create an index on Primary key ()
+Index -- Partition key and sort key
+
+2. Create an index on salary:
+Index  --Partition key and sort key and salary
+
+3. Create an index on deptId and project all fields
+Index  --Partition key and sort key and all the attributes in the various items
+
+4. Create an index only on partition key
+5. Create an index only on sort key 
+Index  -- sort key and Partition key 
+
+
+Table
+Employee (empId(PK),empName,salary,deptId,location)
+
+1.Index on empId
+2. Index on salary
+3.Index on empId and salary
+4. Index on salary and project empName also
+Index fields: empId(PK),empName,salary
+
+select empName where salary > 5000;// Get the data from the index itself and need not the access the table; 
+1. Go to the salary index;
+2. Directly fetch the data from the index itself and not go to the table
+
+
+RDBMS -- 
+create index idx_salary on salary
+
+
+
+select empName where salary > 5000;
+Dry run:
+1. Go to the salary index;
+2.Fetch all the records addresses where salary > 5000
+3. Go to the respy memory locations and fetch the records
+
+
+Read consistency in dynamodb
+1. Full Consistency -- Data read will always be consistency across the different regions
+2. Eventual consistency -- Over a period of time, data will become consistent -- probability of reading stale read will be there 
+3. Transaction
+
+
+Eventual consistency -- read an item upto 4kb/sec -- .5RCU
+Strong consistency -- read an item upto 4kb/sec -- 1RCU
+
+Eventual consistency
+Read an item of size 2kb -- .5RCU
+Read an item of size 6kb 	-- 1RCU
+Read an item of size 8kb	-- 1 RCU
+
+
+Standard consistency
+1kb in size -- 1wcu
+4kb in size -- 4wcu
+
+Transactional consistency
+1kb in size -- 2wcu
+
+MAX RCU -- 10 
+max reads /sec -- each item of 4kb size -- 20
+
+Eventual consistency
+100items to be  reads/sec ; each item of size upto 2 kb -- provision 50 RCU -- standard
+
+100items to be  reads/sec ; each item of size upto 2 kb -- On demand
+
+Provisioned -- auto scaling min - 1 ; max - 1000; target utilisation : 70%(consumed/actual) -- cost optimisation
+10:30Am:  read 100 items(2kb): provision 50RCU
+
+11:00Am : read 1000 items(2kb): required -- 500RCU ; auto scaling up will happen
+11:15AM : read 900 items(2kb) -- required -- 450RCU; no changes
+
+11:30AM : read 200 items(2kb) -- auto scaling down 
+
+11:45AM : reads 5000 items(2kb) -- required -- 2500RCU; reads will fail
+
+
+
+
+Employee:
+Country -- partition key
+EmpId -- sort key
+salary
+empName
+deptName
+
+LSI: 
+	-- upto 5 LSI for a table
+	-- can be created only during the table creation
+	-- Will have the same partition key as base table
+	-- Share the base table's rcu and wcu
+
+	Create a LSI
+	fields:
+		1. Country(PK) with deptName(SK) for index
+		2. Country(PK) with empName(SK) for index
+	Use case
+	1. select * from employee where deptName="HR"
+
+GSI
+	-- upto 20 GSI for a table
+	-- can be created during table creation and after table creation also
+	-- Different partition key and sort key from the base table
+	-- Default -- same capacity as the base table
+	-- Configure the capacity after the table creation
+	fields
+		1. deptName(PK)
+		2. deptName and empName
+ 
+
+RBAC
+Role based access control
+
+Username, password -- for authentication
+role for user -- for authorisation -- permissions for operations on various resource
+
+RDBMS
+Admin role-create others users/role
+RBAC -- internal to the language
+
+RBAC to Amazon
+AWS -- IAM
+
+select * -- all columns
+select empId,empName
+
+With respect to cost
+scan or query
+query -- 1 partition
+scan -- complete table scan
+
+
+1 million records
+scan -- traverse through all the 1 million records and apply the filter condition
+
+query -- traverse through only 1 partition of records and apply the filter condition only on that partition of data
+
+
+
+
+
+
+
+
+Dynamodb
+Queries will always return a single partition(1 or more records based on the sort key with the same partition key)
+Foll queries are not allowed
+1. select * from employee  --
+2. select * from employee where empId=101;
+3. select * from employee where salary > 5000
+
+
+App:
+select * from employee where country="INDIA" -- query the table
+select * from employee where salary > 5000 -- create an GSI index on salary; query the index
+
+Make the foll query faster
+select * from employee where country="India" and empName begins with "a" --;create a LSI(country,empName)  query the table
+
+
+
+
